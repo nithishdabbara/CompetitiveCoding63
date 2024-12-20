@@ -1,0 +1,141 @@
+#include <stdio.h>  
+#include <stdlib.h>  
+#include <ctype.h>  
+
+#define MAX_SIZE 100  
+
+int stack[MAX_SIZE];  
+int top = -1;  
+
+void push(int item) {  
+    if (top >= MAX_SIZE - 1) {  
+        printf("Stack Overflow\n");  
+        return;  
+    }  
+    top++;  
+    stack[top] = item;  
+}  
+
+int pop() {  
+    if (top < 0) {  
+        printf("Stack Underflow\n");  
+        return -1;  
+    }  
+    int item = stack[top];  
+    top--;  
+    return item;  
+}  
+
+int is_operator(char symbol) {  
+    return (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/');  
+}  
+
+int evaluate_postfix(char* expression) {  
+    int i = 0;  
+    char symbol = expression[i];  
+    int operand1, operand2, result;  
+
+    while (symbol != '\0') {  
+        if (symbol == ' ') {
+            i++;
+            symbol = expression[i];
+            continue;
+        }
+
+        if (isdigit(symbol)) {  
+            int num = 0;
+            while (isdigit(symbol)) {
+                num = num * 10 + (symbol - '0');
+                i++;
+                symbol = expression[i];
+            }
+            push(num);  
+        }  
+        else if (is_operator(symbol)) {  
+            operand2 = pop();  
+            operand1 = pop();  
+            switch(symbol) {  
+                case '+': result = operand1 + operand2; break;  
+                case '-': result = operand1 - operand2; break;  
+                case '*': result = operand1 * operand2; break;  
+                case '/': result = operand1 / operand2; break;  
+            }  
+            push(result);  
+        }  
+        i++;  
+        symbol = expression[i];  
+    }  
+    result = pop();  
+    return result;  
+}  
+
+int evaluate_prefix(char* expression) {  
+    int i = 0;  
+    char symbol = expression[i];  
+    int operand1, operand2, result;  
+    int length = 0;
+
+    while (expression[length] != '\0') {
+        length++;
+    }
+
+    i = length - 1;
+
+    while (i >= 0) {  
+        symbol = expression[i];  
+
+        if (symbol == ' ') {
+            i--;
+            continue;
+        }
+
+        if (isdigit(symbol)) {  
+            int num = 0;
+            while (isdigit(symbol)) {
+                num = num * 10 + (symbol - '0');
+                i--;
+                symbol = expression[i];
+            }
+            push(num);  
+        }  
+        else if (is_operator(symbol)) {  
+            operand1 = pop();  
+            operand2 = pop();  
+            switch(symbol) {  
+                case '+': result = operand1 + operand2; break;  
+                case '-': result = operand1 - operand2; break;  
+                case '*': result = operand1 * operand2; break;  
+                case '/': result = operand1 / operand2; break;  
+            }  
+            push(result);  
+        }  
+        i--;  
+    }  
+    result = pop();  
+    return result;  
+}  
+
+int main() {  
+    char expression[MAX_SIZE];  
+    int choice;
+
+    printf("Choose the expression format:\n1. Postfix\n2. Prefix\nEnter choice: ");
+    scanf("%d", &choice);
+    getchar(); 
+
+    printf("Enter the expression: ");
+    fgets(expression, sizeof(expression), stdin);
+
+    int result;
+    if (choice == 1) {
+        result = evaluate_postfix(expression);  
+    } else if (choice == 2) {
+        result = evaluate_prefix(expression);  
+    } else {
+        printf("Invalid choice\n");
+        return 1;
+    }
+
+    printf("Result = %d\n", result);  
+    return 0;  
+}  
