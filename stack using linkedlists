@@ -1,25 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Define a structure for a stack node
 struct Node {
     int data;
     struct Node* next;
 };
 
-// Define a structure for the stack
 struct Stack {
     struct Node* top;
 };
 
-// Function to create a new stack
 struct Stack* createStack() {
     struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
     stack->top = NULL;
     return stack;
 }
 
-// Function to create a new node
 struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = data;
@@ -27,12 +23,10 @@ struct Node* createNode(int data) {
     return newNode;
 }
 
-// Function to check if the stack is empty
 int isEmpty(struct Stack* stack) {
     return stack->top == NULL;
 }
 
-// Function to push an element onto the stack
 void push(struct Stack* stack, int data) {
     struct Node* newNode = createNode(data);
     newNode->next = stack->top;
@@ -40,7 +34,6 @@ void push(struct Stack* stack, int data) {
     printf("%d pushed to stack\n", data);
 }
 
-// Function to pop an element from the stack
 int pop(struct Stack* stack) {
     if (isEmpty(stack)) {
         printf("Stack underflow\n");
@@ -53,7 +46,6 @@ int pop(struct Stack* stack) {
     return poppedData;
 }
 
-// Function to display the stack
 void display(struct Stack* stack) {
     if (isEmpty(stack)) {
         printf("Stack is empty\n");
@@ -68,7 +60,6 @@ void display(struct Stack* stack) {
     printf("\n");
 }
 
-// Main function to demonstrate stack operations
 int main() {
     struct Stack* stack = createStack();
 
@@ -87,10 +78,8 @@ int main() {
     printf("%d popped from stack\n", pop(stack));
     display(stack);
 
-    // Attempt to pop from an empty stack
     pop(stack);
 
-    // Free the stack memory
     free(stack);
 
     return 0;
