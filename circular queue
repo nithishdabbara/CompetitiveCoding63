@@ -5,103 +5,114 @@
 // d. Rear
 
 
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-#define MAX 5
+#define SIZE 5
 
-struct MinStack {
-    int stack[MAX];
-    int min_stack[MAX];
-    int top;
-};
+typedef struct {
+    int items[SIZE];
+    int front, rear;
+} CircularQueue;
 
-void initStack(struct MinStack* minStack) {
-    minStack->top = -1;
+void initializeQueue(CircularQueue* cq) {
+    cq->front = -1;
+    cq->rear = -1;
 }
 
-int isFull(struct MinStack* minStack) {
-    return minStack->top == MAX - 1;
+int isFull(CircularQueue* cq) {
+    return (cq->rear + 1) % SIZE == cq->front;
 }
 
-int isEmpty(struct MinStack* minStack) {
-    return minStack->top == -1;
+int isEmpty(CircularQueue* cq) {
+    return cq->front == -1;
 }
 
-void push(struct MinStack* minStack, int value) {
-    if (isFull(minStack)) {
-        printf("Overflow: Stack is full, cannot push element\n");
+void enqueue(CircularQueue* cq, int value) {
+    if (isFull(cq)) {
+        printf("Queue is full!\n");
         return;
     }
+    if (isEmpty(cq)) {
+        cq->front = 0;
+    }
+    cq->rear = (cq->rear + 1) % SIZE;
+    cq->items[cq->rear] = value;
+    printf("Enqueued: %d\n", value);
+}
 
-    minStack->stack[++(minStack->top)] = value;
-
-    if (minStack->top == 0) {
-        minStack->min_stack[minStack->top] = value;
+int dequeue(CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Queue is empty!\n");
+        return -1;
+    }
+    int value = cq->items[cq->front];
+    if (cq->front == cq->rear) {
+        cq->front = cq->rear = -1;
     } else {
-        int currentMin = minStack->min_stack[minStack->top - 1];
-        minStack->min_stack[minStack->top] = (value < currentMin) ? value : currentMin;
+        cq->front = (cq->front + 1) % SIZE;
     }
+    printf("Dequeued: %d\n", value);
+    return value;
 }
 
-int pop(struct MinStack* minStack) {
-    if (isEmpty(minStack)) {
-        printf("Underflow: Stack is empty, cannot pop element\n");
+int front(CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Queue is empty!\n");
         return -1;
     }
-    return minStack->stack[minStack->top--];
+    return cq->items[cq->front];
 }
 
-int top(struct MinStack* minStack) {
-    if (isEmpty(minStack)) {
-        printf("Underflow: Stack is empty, no top element\n");
+int rear(CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Queue is empty!\n");
         return -1;
     }
-    return minStack->stack[minStack->top];
+    return cq->items[cq->rear];
 }
 
-int detMin(struct MinStack* minStack) {
-    if (isEmpty(minStack)) {
-        printf("Underflow: Stack is empty, no minimum element\n");
-        return -1;
-    }
-    return minStack->min_stack[minStack->top];
-}
-
-void display(struct MinStack* minStack) {
-    if (isEmpty(minStack)) {
-        printf("Stack is empty\n");
+void display(CircularQueue* cq) {
+    if (isEmpty(cq)) {
+        printf("Queue is empty!\n");
         return;
     }
-
-    printf("Stack elements: ");
-    for (int i = 0; i <= minStack->top; i++) {
-        printf("%d ", minStack->stack[i]);
+    printf("Queue elements: ");
+    int i = cq->front;
+    while (1) {
+        printf("%d ", cq->items[i]);
+        if (i == cq->rear) {
+            break;
+        }
+        i = (i + 1) % SIZE;
     }
-    printf("\nMinimum element so far: %d\n", detMin(minStack));
+    printf("\n");
 }
 
 int main() {
-    struct MinStack minStack;
-    initStack(&minStack);
+    CircularQueue cq;
+    initializeQueue(&cq);
 
-    push(&minStack, 10);
-    push(&minStack, 20);
-    push(&minStack, 5);
-    push(&minStack, 30);
+    enqueue(&cq, 10);
+    enqueue(&cq, 20);
+    enqueue(&cq, 30);
+    enqueue(&cq, 40);
+    enqueue(&cq, 50);
+    display(&cq);
 
-    display(&minStack);
+    printf("Front: %d\n", front(&cq));
+    printf("Rear: %d\n", rear(&cq));
 
-    printf("Popped: %d\n", pop(&minStack));
-    display(&minStack);
+    dequeue(&cq);
+    dequeue(&cq);
+    display(&cq);
 
-    printf("Top element: %d\n", top(&minStack));
-    printf("Minimum element: %d\n", detMin(&minStack));
+    enqueue(&cq, 60);
+    enqueue(&cq, 70);
+    display(&cq);
 
-    pop(&minStack);
-    pop(&minStack);
-    pop(&minStack);
-    pop(&minStack);
+    printf("Front: %d\n", front(&cq));
+    printf("Rear: %d\n", rear(&cq));
 
     return 0;
 }
