@@ -1,0 +1,107 @@
+// Write a program to design a circular queue(k) which Should implement the below functions
+// a. Enqueue
+// b. Dequeue
+// c. Front
+// d. Rear
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+struct MinStack {
+    int stack[MAX];
+    int min_stack[MAX];
+    int top;
+};
+
+void initStack(struct MinStack* minStack) {
+    minStack->top = -1;
+}
+
+int isFull(struct MinStack* minStack) {
+    return minStack->top == MAX - 1;
+}
+
+int isEmpty(struct MinStack* minStack) {
+    return minStack->top == -1;
+}
+
+void push(struct MinStack* minStack, int value) {
+    if (isFull(minStack)) {
+        printf("Overflow: Stack is full, cannot push element\n");
+        return;
+    }
+
+    minStack->stack[++(minStack->top)] = value;
+
+    if (minStack->top == 0) {
+        minStack->min_stack[minStack->top] = value;
+    } else {
+        int currentMin = minStack->min_stack[minStack->top - 1];
+        minStack->min_stack[minStack->top] = (value < currentMin) ? value : currentMin;
+    }
+}
+
+int pop(struct MinStack* minStack) {
+    if (isEmpty(minStack)) {
+        printf("Underflow: Stack is empty, cannot pop element\n");
+        return -1;
+    }
+    return minStack->stack[minStack->top--];
+}
+
+int top(struct MinStack* minStack) {
+    if (isEmpty(minStack)) {
+        printf("Underflow: Stack is empty, no top element\n");
+        return -1;
+    }
+    return minStack->stack[minStack->top];
+}
+
+int detMin(struct MinStack* minStack) {
+    if (isEmpty(minStack)) {
+        printf("Underflow: Stack is empty, no minimum element\n");
+        return -1;
+    }
+    return minStack->min_stack[minStack->top];
+}
+
+void display(struct MinStack* minStack) {
+    if (isEmpty(minStack)) {
+        printf("Stack is empty\n");
+        return;
+    }
+
+    printf("Stack elements: ");
+    for (int i = 0; i <= minStack->top; i++) {
+        printf("%d ", minStack->stack[i]);
+    }
+    printf("\nMinimum element so far: %d\n", detMin(minStack));
+}
+
+int main() {
+    struct MinStack minStack;
+    initStack(&minStack);
+
+    push(&minStack, 10);
+    push(&minStack, 20);
+    push(&minStack, 5);
+    push(&minStack, 30);
+
+    display(&minStack);
+
+    printf("Popped: %d\n", pop(&minStack));
+    display(&minStack);
+
+    printf("Top element: %d\n", top(&minStack));
+    printf("Minimum element: %d\n", detMin(&minStack));
+
+    pop(&minStack);
+    pop(&minStack);
+    pop(&minStack);
+    pop(&minStack);
+
+    return 0;
+}
