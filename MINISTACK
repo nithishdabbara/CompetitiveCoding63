@@ -29,7 +29,6 @@ void push(struct MinStack* minStack, int value) {
 
     minStack->stack[++(minStack->top)] = value;
 
-    // Update the min_stack
     if (minStack->top == 0) {
         minStack->min_stack[minStack->top] = value;
     } else {
@@ -95,7 +94,7 @@ int main() {
     pop(&minStack);
     pop(&minStack);
     pop(&minStack);
-    pop(&minStack); // This will cause an underflow
+    pop(&minStack);
 
     return 0;
 }
